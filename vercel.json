@@ -1,0 +1,11 @@
+{
+  "functions": {
+    "api/ultra.js": {
+      "runtime": "vercel-deno@1.1.1"
+    }
+  },
+  "regions": ["syd1"],
+  "routes": [
+    { "handle": "filesystem" }
+  ]
+}

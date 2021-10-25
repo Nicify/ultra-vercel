@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "build": "mkdir -p .vercel_build_output/static && cp -a src/. .vercel_build_output/static && cp -a .ultra/. .vercel_build_output/static",
+    "predev": "npm run ultra",
+    "ultra": "deno run --allow-all --unstable build.js"
+  }
+}
