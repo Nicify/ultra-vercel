@@ -1,7 +1,12 @@
-import { emptyDir, walkSync } from "https://deno.land/std@0.106.0/fs/mod.ts";
+import {
+  copy,
+  emptyDir,
+  walkSync,
+} from "https://deno.land/std@0.106.0/fs/mod.ts";
 import transform from "https://raw.githubusercontent.com/exhibitionist-digital/ultra/master/src/transform.ts";
 
-await emptyDir("./.ultra");
+await emptyDir(".vercel_build_output");
+await emptyDir(".ultra");
 
 //get importmap
 const importmapSource = await Deno.readTextFile("importmap.json");
@@ -16,7 +21,7 @@ for (const entry of walkSync("./src")) {
     const t = await transform({
       source,
       importmap,
-      root: "https://ultra.deno.dev",
+      root: Deno.env.get("VERCEL_URL"),
     });
     console.log(entry.path);
     await Deno.writeTextFile(
@@ -31,6 +36,20 @@ for (const entry of walkSync("./src")) {
       }`,
       t,
     );
+  }
+}
+
+await copy("./src", "./.vercel_build_output/static");
+
+for (const entry of walkSync(".ultra")) {
+  if (entry.isFile) {
+    await (copy(
+      entry?.path,
+      entry?.path?.replace(
+        ".ultra/",
+        ".vercel_build_output/static/",
+      ),
+    ));
   }
 }
 

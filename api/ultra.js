@@ -1,35 +1,18 @@
 #!/usr/bin/env DENO_DIR=/tmp deno run --import-map ../importmap.json 
-import render from "https://deno.land/x/ultra@v0.6/src/render.ts";
+import render from "https://raw.githubusercontent.com/exhibitionist-digital/ultra/vercel-test/src/render.ts?G=xcccx";
+
+const importmapSource = await Deno.readTextFile("./importmap.json");
+const importmap = JSON.parse(importmapSource);
 
 export default async (request) => {
-  //get importmap
-  const importmapSource = await Deno.readTextFile("./importmap.json");
-  const importmap = JSON.parse(importmapSource);
-
-  try {
-    const b = await render({
-      root: "http://localhost:3000",
-      request: request,
+  const { headers } = request;
+  return new Response(
+    await render({
+      root: headers.get("x-forwarded-proto") + "://" +
+        headers.get("x-forwarded-host"),
+      request,
       importmap,
       lang: "en",
-    });
-    console.log({ b });
-    try {
-      request.respond({
-        status: 200,
-        headers: new Headers({
-          "content-type": "text/html",
-        }),
-        body: b,
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  } catch (e) {
-    console.log({ e });
-    request.respond({
-      status: 500,
-      body: JSON.stringify(e),
-    });
-  }
+    }),
+  );
 };

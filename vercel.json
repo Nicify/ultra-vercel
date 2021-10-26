@@ -6,6 +6,7 @@
   },
   "regions": ["syd1"],
   "routes": [
-    { "handle": "filesystem" }
+    { "handle": "filesystem" },
+    { "src": "/.*", "dest": "/api/ultra.js" }
   ]
 }
